@@ -4,11 +4,13 @@ use std::time::Duration;
 use async_std::task::sleep;
 use chromiumoxide::browser::{Browser, BrowserConfig};
 use futures::StreamExt;
+use serde::{Deserialize, Serialize};
 
 use super::*;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct SbiAssset {
+    date: String,
     total: i32,
     profit: i32,
     profit_percent: f32,
@@ -18,6 +20,7 @@ impl SbiAssset {
     #[allow(dead_code)]
     fn default() -> Self {
         Self {
+            date: String::new(),
             total: 0,
             profit: 0,
             profit_percent: 0.0,
@@ -25,8 +28,9 @@ impl SbiAssset {
     }
 
     #[allow(dead_code)]
-    fn new(total: i32, profit: i32, profit_percent: f32) -> Self {
+    fn new(date: String, total: i32, profit: i32, profit_percent: f32) -> Self {
         Self {
+            date,
             total,
             profit,
             profit_percent,
@@ -102,7 +106,21 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
         .await?;
     let total = extract_number::<i32>(total_str.as_deref())?;
 
-    Ok(SbiAssset::new(total, profit, profit_percent))
+    //算出日時
+    let date_str = page
+        .find_element("#summaryForm > div > p.fm01.floatL")
+        .await?
+        .inner_text()
+        .await?;
+    let date = match date_str {
+        Some(value) => {
+            let ret = value.replace("算出日：", "");
+            ret
+        },
+        None => Err("date is invalid")?,
+    };
+
+    Ok(SbiAssset::new(date, total, profit, profit_percent))
 }
 
 fn extract_number<F: FromStr>(arg: Option<&str>) -> Result<F> {
