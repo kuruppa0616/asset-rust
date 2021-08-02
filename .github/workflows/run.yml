@@ -14,9 +14,9 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      SBI_ID:${{ secrets.SBI_ID }}
-      SBI_PASS:${{ secrets.SBI_PASS }}
-      GAS_URL:${{ secrets.GAS_URL }}
+      SBI_ID: ${{ secrets.SBI_ID }}
+      SBI_PASS: ${{ secrets.SBI_PASS }}
+      GAS_URL: ${{ secrets.GAS_URL }}
 
     steps:
     - uses: actions/checkout@v2
