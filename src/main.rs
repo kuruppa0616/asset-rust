@@ -4,7 +4,7 @@ use std::env;
 use std::error;
 
 use dotenv::dotenv;
-mod sbi;
+mod sbia;
 
 pub type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 
@@ -26,7 +26,7 @@ async fn main() -> Result<()> {
 
     let gas_url = env::var("GAS_URL").expect("GAS_URL is not found");
     
-    let sbi_asset = match sbi::fetch_sbi_asset(&sbi_credential).await {
+    let sbi_asset = match sbia::fetch_sbi_asset(&sbi_credential).await {
         Ok(value) => value,
         Err(e) => Err(e)?,
     };
