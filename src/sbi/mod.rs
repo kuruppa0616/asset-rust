@@ -41,6 +41,9 @@ impl SbiAssset {
 const BASE_URL: &str = "https://site1.sbisec.co.jp/ETGate/";
 
 pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
+
+    let sleep_duration =  env::var("SLEEP_DURATION").expect("SLEEP_DURATION is not found").parse::<u64>().unwrap();
+    
     let (browser, mut handler) = Browser::launch(BrowserConfig::builder().build()?)
         .await
         .expect("Cant Launch Browser");
@@ -58,7 +61,7 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
     // ログインページ
     login_sbi(&page, &credential).await?;
     page.wait_for_navigation().await?;
-    sleep(Duration::from_secs(1)).await;
+    sleep(Duration::from_secs(sleep_duration)).await;
 
     // 口座管理ページ
     page.find_element("#link02M > ul > li:nth-child(3) > a")
@@ -67,7 +70,7 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
         .click()
         .await?;
     page.wait_for_navigation().await?;
-    sleep(Duration::from_secs(1)).await;
+    sleep(Duration::from_secs(sleep_duration)).await;
 
     // トータルリターンページ
     page.find_element("#navi02P > ul > li:nth-child(5) > div > a")
@@ -76,7 +79,7 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
         .click()
         .await?;
     page.wait_for_navigation().await?;
-    sleep(Duration::from_secs(1)).await;
+    sleep(Duration::from_secs(sleep_duration)).await;
 
     // トータルリターン取得
     let profit = page
