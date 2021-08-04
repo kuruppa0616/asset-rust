@@ -1,7 +1,4 @@
 use std::str::FromStr;
-use std::time::Duration;
-
-use async_std::task::sleep;
 use chromiumoxide::browser::{Browser, BrowserConfig};
 use futures::StreamExt;
 use serde::{Deserialize, Serialize};
@@ -41,8 +38,6 @@ impl SbiAssset {
 const BASE_URL: &str = "https://site1.sbisec.co.jp/ETGate/";
 
 pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
-
-    let sleep_duration =  env::var("SLEEP_DURATION").expect("SLEEP_DURATION is not found").parse::<u64>().unwrap();
     
     let (browser, mut handler) = Browser::launch(BrowserConfig::builder().build()?)
         .await
@@ -60,8 +55,7 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
 
     // ログインページ
     login_sbi(&page, &credential).await?;
-    page.wait_for_navigation().await?;
-    sleep(Duration::from_secs(sleep_duration)).await;
+    page.wait_for_navigation().await?.content().await?;
 
     // 口座管理ページ
     page.find_element("#link02M > ul > li:nth-child(3) > a")
@@ -69,8 +63,7 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
         .expect("not found ポートフォリオ")
         .click()
         .await?;
-    page.wait_for_navigation().await?;
-    sleep(Duration::from_secs(sleep_duration)).await;
+    page.wait_for_navigation().await?.content().await?;
 
     // トータルリターンページ
     page.find_element("#navi02P > ul > li:nth-child(5) > div > a")
@@ -78,8 +71,7 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
         .expect("not found トータルリターン")
         .click()
         .await?;
-    page.wait_for_navigation().await?;
-    sleep(Duration::from_secs(sleep_duration)).await;
+    page.wait_for_navigation().await?.content().await?;
 
     // トータルリターン取得
     let profit = page
@@ -159,8 +151,7 @@ async fn login_sbi(page: &chromiumoxide::Page, credential: &Credential) -> Resul
         .press_key("Enter")
         .await?;
 
-    page.wait_for_navigation().await?;
-    sleep(Duration::from_secs(3)).await;
+    page.wait_for_navigation().await?.content().await?;
 
     Ok(())
 }

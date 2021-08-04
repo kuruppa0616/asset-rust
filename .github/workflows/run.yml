@@ -28,7 +28,5 @@ jobs:
           target
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
     - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --verbose
     - name: Run
       run: cargo run --verbose
