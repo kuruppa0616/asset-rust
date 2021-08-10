@@ -63,7 +63,8 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
         .expect("not found ポートフォリオ")
         .click()
         .await?;
-    page.wait_for_navigation().await?.content().await?;
+    let _portfolio = page.wait_for_navigation().await?.content().await?;
+    // dbg!(&portfolio);
 
     // トータルリターンページ
     page.find_element("#navi02P > ul > li:nth-child(5) > div > a")
@@ -71,7 +72,9 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
         .expect("not found トータルリターン")
         .click()
         .await?;
-    page.wait_for_navigation().await?.content().await?;
+    let _totalreturn = page.wait_for_navigation().await?.content().await?;
+    // dbg!(&totalreturn);
+
 
     // トータルリターン取得
     let profit = page
