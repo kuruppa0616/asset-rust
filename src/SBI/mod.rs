@@ -57,6 +57,14 @@ pub async fn fetch_sbi_asset(credential: &Credential) -> Result<SbiAssset> {
     login_sbi(&page, &credential).await?;
     page.wait_for_navigation().await?.content().await?;
 
+    // ログイン成功判定
+    let logout_button = page.find_element("#logoutM > a")
+        .await;
+
+    if let Err(_) = logout_button {
+        Err("ログイン失敗")?
+    } 
+
     // 口座管理ページ
     page.find_element("#link02M > ul > li:nth-child(3) > a")
         .await

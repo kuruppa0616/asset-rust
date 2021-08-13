@@ -4,8 +4,8 @@ use std::env;
 use std::error;
 
 use dotenv::dotenv;
-use sbi::SbiAssset;
-mod sbi;
+mod SBI;
+use SBI::SbiAssset;
 
 pub type Result<T> = std::result::Result<T, Box<dyn error::Error>>;
 
@@ -27,7 +27,7 @@ async fn main() -> Result<()> {
 
     let gas_url = env::var("GAS_URL").expect("GAS_URL is not found");
     
-    let sbi_asset = match try_scrape(&sbi_credential, 5).await {
+    let sbi_asset = match try_scrape(&sbi_credential, 3).await {
         Ok(value) => value,
         Err(e) => Err(e)?,
     };
@@ -50,8 +50,12 @@ async fn main() -> Result<()> {
 async fn try_scrape(credential: &Credential, try_times: i32) -> Result<SbiAssset> {
     
     for _ in 0..try_times {
-        if let Ok(value) = sbi::fetch_sbi_asset(&credential).await {
-            return Ok(value)
+
+        match SBI::fetch_sbi_asset(&credential).await {
+            Ok(value) => return Ok(value),
+            Err(e) => {
+                dbg!(format!("{}:再試行します", &e));
+            },
         }
     }
     Err(format!("スクレイプ失敗 試行回数{}",try_times))?
