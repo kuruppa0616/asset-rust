@@ -32,7 +32,6 @@ async fn main() -> Result<()> {
         Err(e) => Err(e)?,
     };
 
-    dbg!(&sbi_asset);
     // GASへポスト
     let res = surf::post(gas_url).body(surf::Body::from_json(&sbi_asset)?).await;
 
