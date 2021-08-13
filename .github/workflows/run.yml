@@ -16,8 +16,7 @@ jobs:
       SBI_ID: ${{ secrets.SBI_ID }}
       SBI_PASS: ${{ secrets.SBI_PASS }}
       GAS_URL: ${{ secrets.GAS_URL }}
-      SLEEP_DURATION: ${{ secrets.SLEEP_DURATION }}
-
+      
     steps:
     - uses: actions/checkout@v2
     - name: Run
