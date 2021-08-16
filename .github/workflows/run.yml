@@ -1,3 +1,7 @@
+# Reference
+# https://www.infinyon.com/blog/2021/04/github-actions-best-practices/
+# https://blog.endflow.net/speedup-rust-build/
+
 name: Rust
 
 on:
